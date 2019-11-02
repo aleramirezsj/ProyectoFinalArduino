@@ -3,40 +3,28 @@ const int enRojo = 0;
 const int enVerde = 1;
 const int subirPuente = 0;
 const int bajarPuente = 1;
+const int bajarBarreras = 0;
+const int subirBarreras = 1;
 
-
-
-//declaración de variables
-//PULSADOR
+//utilización de pines
 int pinPulsador = 2; //Conectamos el pulsador en el pin 2
-int valorPulsador = 0;
-
-//SEMAFORO
 int pinRojo = 4;
 int pinAmarillo = 6;
 int pinVerde = 7;
-
-int puenteElevado = false;
-
-//BARRERAS
-const int subirBarreras = 1;
-const int bajarBarreras = 0;
-
 int pinBarreras = 5;
-
-#include <Servo.h>
-
-Servo myservo;
-
-int posServo = 0;
-//FIN BARRERAS
-//PASO A PASO
-// Definimos los pines donde tenemos conectadas las bobinas
+//PASO A PASO: Definimos los pines donde tenemos conectadas las bobinas
 #define IN1  8
 #define IN2  9
 #define IN3  10
 #define IN4  11
-int ejecuciones = 0;
+
+//declaración de variables
+int valorPulsador = 0;
+int puenteElevado = false;
+
+#include <Servo.h>
+Servo myservo;
+int posServo = 0;
 
 // Secuencia de pasos (par máximo)
 int paso [4][4] =
@@ -53,7 +41,6 @@ int paso2 [4][4] =
   {1, 1, 0, 0},
   {1, 0, 0, 1}
 };
-//FIN PASO A PASO
 
 void setup() {
   // put your setup code here, to run once:
@@ -66,9 +53,10 @@ void setup() {
   pinMode(IN2, OUTPUT);
   pinMode(IN3, OUTPUT);
   pinMode(IN4, OUTPUT);
+
+  //Estado inicial
   myservo.attach(pinBarreras);
   semaforos(enVerde);
-
   barreras(subirBarreras);
 }
 
@@ -89,7 +77,7 @@ void loop() {
       //Bajar barreras
       barreras(bajarBarreras);
       //Elevar puente
-      puente(subirPuente);
+      //puente(subirPuente);
 
       puenteElevado = true; //Ahora el puente está elevado
     }
@@ -97,7 +85,7 @@ void loop() {
       //Bajar puente!!!
 
       //Bajar puente
-      puente(bajarPuente);
+      //puente(bajarPuente);
       //Elevar barreras
       barreras(subirBarreras);
       //Semáforos a verde
@@ -105,6 +93,11 @@ void loop() {
 
       puenteElevado = false; //Ahora el puente está bajo
     }
+  }
+  if(puenteElevado){
+    puente(subirPuente);
+  }else{
+    puente(bajarPuente);
   }
 
 }
@@ -133,6 +126,7 @@ void semaforos(int enRojo) {
   }
 }
 
+//Programamos las barreras
 void barreras(int hacer) {
   if (hacer == subirBarreras)
   {
@@ -149,6 +143,7 @@ void barreras(int hacer) {
   }
 }
 
+//Programamos el puente
 void puente(int elevar) {
   if (elevar == subirPuente) {
     for (int i = 0; i < 4; i++)
