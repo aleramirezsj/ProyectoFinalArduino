@@ -3,6 +3,7 @@ const int enRojo = 0;
 const int enVerde = 1;
 const int subirPuente = 0;
 const int bajarPuente = 1;
+
 const int bajarBarreras = 0;
 const int subirBarreras = 1;
 
@@ -20,7 +21,6 @@ int pinBajarPuente=11;
 int valorPulsador = 0;
 int puenteElevado = false;
 
-int repeticiones=0;
 
 #include <Servo.h>
 Servo myservo;
@@ -50,7 +50,7 @@ void loop() {
 
   //Cuando el pulsador se oprima
   if (valorPulsador == 1) { //Si se oprime el pulsador...
-    //repeticiones=0;
+    //
     delay(100);
     if (puenteElevado == false) { //... y el puente está bajo
       //Elevar puente!!!!
@@ -60,29 +60,23 @@ void loop() {
       //Bajar barreras
       barreras(bajarBarreras);
       //Elevar puente
-      //puente(subirPuente);
-
+      puente(subirPuente);
+      
       puenteElevado = true; //Ahora el puente está elevado
     }
     else {//Si se oprime el pulsador ... y el puente está elevado
       //Bajar puente!!!
 
       //Bajar puente
-      //puente(bajarPuente);
-      //Elevar barreras
-      barreras(subirBarreras);
+      puente(bajarPuente);
       //Semáforos a verde
       semaforos(enVerde);
+      //Elevar barreras
+      barreras(subirBarreras);
 
       puenteElevado = false; //Ahora el puente está bajo
     }
   }
-  if(puenteElevado){
-    puente(subirPuente);
-  }else{
-    puente(bajarPuente);
-  }
-
 }
 
 //Programamos los semáforos
@@ -127,25 +121,15 @@ void barreras(int hacer) {
 }
 
 //Programamos el puente
-void puente(int elevar) {
-  repeticiones++;  
-  if (elevar == subirPuente) {
-    if(repeticiones<10){
+void puente(int accion) {
+  if (accion == subirPuente) {
       digitalWrite(pinSubirPuente, 1); 
-      digitalWrite(pinBajarPuente, 0); 
-    }
-    else{
-      digitalWrite(pinSubirPuente, 0); 
-      digitalWrite(pinBajarPuente, 0); 
-    }
-      
-  } else {
-    if(repeticiones<10){
-      digitalWrite(pinSubirPuente, 0); 
+      delay(3000);
+      digitalWrite(pinSubirPuente, 0);     
+  }
+  if (accion == bajarPuente){
       digitalWrite(pinBajarPuente, 1); 
-    }else{
-      digitalWrite(pinSubirPuente, 0); 
-      digitalWrite(pinBajarPuente, 0); 
-    }
+      delay(1775);  
+      digitalWrite(pinBajarPuente, 0);     
   }
 }
