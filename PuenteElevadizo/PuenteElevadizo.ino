@@ -12,35 +12,20 @@ int pinRojo = 4;
 int pinAmarillo = 6;
 int pinVerde = 7;
 int pinBarreras = 5;
-//PASO A PASO: Definimos los pines donde tenemos conectadas las bobinas
-#define IN1  8
-#define IN2  9
-#define IN3  10
-#define IN4  11
+int pinSubirPuente=10;
+int pinBajarPuente=11;
+
 
 //declaración de variables
 int valorPulsador = 0;
 int puenteElevado = false;
 
+int repeticiones=0;
+
 #include <Servo.h>
 Servo myservo;
 int posServo = 0;
 
-// Secuencia de pasos (par máximo)
-int paso [4][4] =
-{
-  {1, 1, 0, 0},
-  {0, 1, 1, 0},
-  {0, 0, 1, 1},
-  {1, 0, 0, 1}
-};
-int paso2 [4][4] =
-{
-  {0, 0, 1, 1},
-  {0, 1, 1, 0},
-  {1, 1, 0, 0},
-  {1, 0, 0, 1}
-};
 
 void setup() {
   // put your setup code here, to run once:
@@ -49,10 +34,8 @@ void setup() {
   pinMode(pinAmarillo, OUTPUT);
   pinMode(pinVerde, OUTPUT);
   pinMode(pinBarreras, OUTPUT);
-  pinMode(IN1, OUTPUT);
-  pinMode(IN2, OUTPUT);
-  pinMode(IN3, OUTPUT);
-  pinMode(IN4, OUTPUT);
+  pinMode(pinSubirPuente, OUTPUT);
+  pinMode(pinBajarPuente, OUTPUT);
 
   //Estado inicial
   myservo.attach(pinBarreras);
@@ -62,16 +45,16 @@ void setup() {
 
 void loop() {
 
-  // put your main code here, to run repeatedly:
   //Leemos el valor del pulsador
   valorPulsador = digitalRead(pinPulsador);
 
   //Cuando el pulsador se oprima
   if (valorPulsador == 1) { //Si se oprime el pulsador...
+    //repeticiones=0;
     delay(100);
     if (puenteElevado == false) { //... y el puente está bajo
       //Elevar puente!!!!
-
+  
       //Semáforos a rojo
       semaforos(enRojo);
       //Bajar barreras
@@ -145,23 +128,24 @@ void barreras(int hacer) {
 
 //Programamos el puente
 void puente(int elevar) {
+  repeticiones++;  
   if (elevar == subirPuente) {
-    for (int i = 0; i < 4; i++)
-    {
-      digitalWrite(IN1, paso[i][0]);
-      digitalWrite(IN2, paso[i][1]);
-      digitalWrite(IN3, paso[i][2]);
-      digitalWrite(IN4, paso[i][3]);
-      delay(5);
+    if(repeticiones<10){
+      digitalWrite(pinSubirPuente, 1); 
+      digitalWrite(pinBajarPuente, 0); 
     }
+    else{
+      digitalWrite(pinSubirPuente, 0); 
+      digitalWrite(pinBajarPuente, 0); 
+    }
+      
   } else {
-    for (int i = 0; i < 4; i++)
-    {
-      digitalWrite(IN1, paso2[i][0]);
-      digitalWrite(IN2, paso2[i][1]);
-      digitalWrite(IN3, paso2[i][2]);
-      digitalWrite(IN4, paso2[i][3]);
-      delay(5);
+    if(repeticiones<10){
+      digitalWrite(pinSubirPuente, 0); 
+      digitalWrite(pinBajarPuente, 1); 
+    }else{
+      digitalWrite(pinSubirPuente, 0); 
+      digitalWrite(pinBajarPuente, 0); 
     }
   }
 }
